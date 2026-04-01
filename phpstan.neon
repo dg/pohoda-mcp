@@ -1,0 +1,13 @@
+parameters:
+	level: 8
+
+	paths:
+		- src
+
+	ignoreErrors:
+		# McpToolCallGuard catches ToolCallException to pass it through unchanged, but the decorated
+		# SDK handler's interface under-declares @throws, so PHPStan flags the catch as dead. It is
+		# reachable at runtime (assertOk throws it). False positive, scoped to this file.
+		-
+			identifier: catch.neverThrown
+			path: src/McpToolCallGuard.php
