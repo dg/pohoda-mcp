@@ -1,0 +1,37 @@
+{
+	"name": "dg/pohoda-mcp",
+	"description": "MCP server pro účetní software Pohoda. Umožňuje AI asistentům číst a vytvářet faktury, objednávky, zásoby, kontakty a další agendy přes mServer XML API.",
+	"keywords": ["mcp", "pohoda", "stormware", "mserver", "accounting", "xml-api", "ai", "invoices"],
+	"authors": [
+		{
+			"name": "David Grudl",
+			"homepage": "https://davidgrudl.com"
+		}
+	],
+	"type": "project",
+	"license": "MIT",
+	"require": {
+		"php": ">=8.1",
+		"ext-curl": "*",
+		"ext-dom": "*",
+		"ext-simplexml": "*",
+		"mcp/sdk": "*"
+	},
+	"require-dev": {
+		"nette/tester": "^2.5",
+		"phpstan/phpstan": "^2.1",
+		"phpstan/extension-installer": "^1.4",
+		"nette/phpstan-rules": "^1.0.x-dev"
+	},
+	"autoload": {
+		"psr-4": {
+			"DG\\Pohoda\\": "src/"
+		}
+	},
+	"config": {
+		"allow-plugins": {
+			"php-http/discovery": true,
+			"phpstan/extension-installer": true
+		}
+	}
+}
