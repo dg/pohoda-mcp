@@ -3,6 +3,7 @@
 require __DIR__ . '/vendor/autoload.php';
 
 use DG\Pohoda\McpTools;
+use DG\Pohoda\MServerController;
 use DG\Pohoda\PohodaClient;
 use Mcp\Server;
 use Mcp\Server\Transport\StdioTransport;
@@ -13,6 +14,13 @@ $client = new PohodaClient(
 	username: getenv('POHODA_USERNAME') ?: '',
 	password: getenv('POHODA_PASSWORD') ?: '',
 );
+
+// Optional auto-start of mServer on first tool call (Windows-only).
+$exePath = getenv('POHODA_EXE_PATH');
+$configName = getenv('POHODA_CONFIG_NAME');
+if ($exePath && $configName) {
+	$client->setController(new MServerController($exePath, $configName));
+}
 
 $server = Server::builder()
 	->setServerInfo('pohoda-mserver', '1.0.0', 'MCP server for Pohoda accounting software')

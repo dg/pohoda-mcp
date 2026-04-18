@@ -39,6 +39,9 @@ class PohodaClient
 	];
 	private string $authHeader;
 	private XmlBuilder $xml;
+	private ?MServerController $controller = null;
+	private bool $started = false;
+	private bool $controllerStarted = false;
 
 
 	public function __construct(
@@ -51,6 +54,29 @@ class PohodaClient
 		$this->url = rtrim($url, '/');
 		$this->authHeader = 'Basic ' . base64_encode($username . ':' . $password);
 		$this->xml = new XmlBuilder($ico, $application);
+	}
+
+
+	/**
+	 * Enable auto-start of mServer. When set, the client will lazily start the
+	 * mServer before the first HTTP request and stop it on shutdown (only if
+	 * we actually started it, i.e. it wasn't running already).
+	 */
+	public function setController(MServerController $controller): void
+	{
+		$this->controller = $controller;
+	}
+
+
+	public function __destruct()
+	{
+		if ($this->controllerStarted && $this->controller !== null) {
+			try {
+				$this->controller->stop();
+			} catch (\Throwable) {
+				// destructor must not throw
+			}
+		}
 	}
 
 
@@ -429,11 +455,41 @@ class PohodaClient
 	/********************* Low-level transport ****************d*g**/
 
 
+	private function ensureRunning(): void
+	{
+		if ($this->started || $this->controller === null) {
+			return;
+		}
+
+		// Set BEFORE controller->start, which polls getStatus()→httpRequest()→ensureRunning() (infinite recursion otherwise).
+		$this->started = true;
+
+		try {
+			// Quick ping; if mServer already runs, skip the start.
+			$this->httpRequest($this->url . '/status', []);
+			return;
+		} catch (\RuntimeException) {
+			// not up — fall through to controller->start
+		}
+
+		try {
+			fwrite(STDERR, "Pohoda mServer not running, starting...\n");
+			$this->controller->start($this);
+			$this->controllerStarted = true;
+			fwrite(STDERR, "Pohoda mServer ready.\n");
+		} catch (\Throwable $e) {
+			$this->started = false;  // reset so next call retries
+			throw $e;
+		}
+	}
+
+
 	/**
 	 * @param list<string> $headers
 	 */
 	private function httpRequest(string $url, array $headers, ?string $postBody = null): string
 	{
+		$this->ensureRunning();
 		$ch = curl_init($url);
 		$opts = [
 			CURLOPT_RETURNTRANSFER => true,
