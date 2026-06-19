@@ -4,6 +4,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 use DG\Pohoda\McpToolCallGuard;
 use DG\Pohoda\McpTools;
+use DG\Pohoda\MServerController;
 use DG\Pohoda\PohodaClient;
 use Mcp\Capability\Registry\ReferenceHandler;
 use Mcp\Server;
@@ -15,6 +16,13 @@ $client = new PohodaClient(
 	username: getenv('POHODA_USERNAME') ?: '',
 	password: getenv('POHODA_PASSWORD') ?: '',
 );
+
+// Optional auto-start of mServer on first tool call
+$exePath = getenv('POHODA_EXE_PATH');
+$configName = getenv('POHODA_CONFIG_NAME');
+if ($exePath && $configName) {
+	$client->setController(new MServerController($exePath, $configName));
+}
 
 $container = new Mcp\Capability\Registry\Container;
 $container->set(McpTools::class, new McpTools($client));
