@@ -1,0 +1,17 @@
+presets:
+	- nette
+
+nameResolution: certain
+
+paths:
+	- src
+	- tests
+
+fileExtensions:
+	- php
+	- phpt
+
+overrides:
+	# a tool takes its arguments by the names of the parameters
+	- paths: [src/McpTools.php]
+	  rules: {name-casing: {variables: keep}}
