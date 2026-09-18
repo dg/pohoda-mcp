@@ -1,0 +1,16 @@
+{
+	"mcpServers": {
+		"pohoda": {
+			"command": "php",
+			"args": ["/cesta/k/pohoda-mcp/server.php"],
+			"env": {
+				"POHODA_URL": "http://localhost:444",
+				"POHODA_ICO": "12345678",
+				"POHODA_USERNAME": "Admin",
+				"POHODA_PASSWORD": "",
+				"POHODA_EXE_PATH": "C:/Program Files (x86)/STORMWARE/POHODA/Pohoda.exe",
+				"POHODA_CONFIG_NAME": "mServer1"
+			}
+		}
+	}
+}
