@@ -111,29 +111,54 @@ mServer už běžel, necháme ho běžet). Windows-only (mServer je součást Po
 Použití v agentech (např. Claude Code)
 --------------------------------------
 
-Přidejte do `.mcp.json` nebo do project settings:
+Hotová konfigurace je v souboru [.mcp.json.example](.mcp.json.example). Zkopírujte ho a doplňte
+absolutní cestu k `server.php` a přístupové údaje. Poslední dvě proměnné jsou volitelné, slouží
+k automatickému spuštění mServeru při prvním tool callu (viz výše). Kam soubor patří, záleží
+na nástroji:
+
+| Nástroj        | Umístění |
+|----------------|----------|
+| Claude Code    | `.mcp.json` v kořeni projektu |
+| Claude Desktop | obsah vložte do `%APPDATA%\Claude\claude_desktop_config.json` |
+| Cursor         | `.cursor/mcp.json` v projektu, nebo `~/.cursor/mcp.json` pro všechny projekty |
+| Gemini CLI     | `.gemini/settings.json` v projektu, nebo `~/.gemini/settings.json` |
+| Windsurf       | `~/.codeium/windsurf/mcp_config.json` |
+
+VS Code (Copilot) používá klíč `servers` a umí si heslo vyžádat při spuštění, takže nemusí
+ležet v souboru. Do `.vscode/mcp.json`:
 
 ```json
 {
-	"mcpServers": {
+	"inputs": [
+		{"type": "promptString", "id": "pohoda-password", "description": "Heslo k mServeru", "password": true}
+	],
+	"servers": {
 		"pohoda": {
+			"type": "stdio",
 			"command": "php",
 			"args": ["/cesta/k/pohoda-mcp/server.php"],
 			"env": {
 				"POHODA_URL": "http://localhost:444",
 				"POHODA_ICO": "12345678",
 				"POHODA_USERNAME": "Admin",
-				"POHODA_PASSWORD": "",
-				"POHODA_EXE_PATH": "C:\\Program Files (x86)\\STORMWARE\\POHODA\\Pohoda.exe",
-				"POHODA_CONFIG_NAME": "mServer1"
+				"POHODA_PASSWORD": "${input:pohoda-password}"
 			}
 		}
 	}
 }
 ```
 
-Poslední dvě proměnné jsou volitelné — slouží k automatickému spuštění mServeru
-při prvním tool callu (viz výše).
+OpenAI Codex CLI má konfiguraci v TOML, do `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.pohoda]
+command = "php"
+args = ["/cesta/k/pohoda-mcp/server.php"]
+env = { POHODA_URL = "http://localhost:444", POHODA_ICO = "12345678", POHODA_USERNAME = "Admin", POHODA_PASSWORD = "" }
+```
+
+**Soubor s heslem nikdy necommitujte.** Pokud konfiguraci ukládáte do projektu, přidejte ji
+do `.gitignore`.
 
 
 Dostupné nástroje
@@ -367,6 +392,7 @@ Struktura projektu
 
 ```
 server.php                 vstupní bod MCP serveru (stdio transport)
+.mcp.json.example          vzorová konfigurace MCP klienta
 src/
 	McpTools.php             tenký MCP adaptér (#[McpTool] atributy)
 	PohodaClient.php         HTTP klient a doménové metody pro mServer API
