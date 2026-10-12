@@ -5,13 +5,13 @@ namespace DG\Pohoda;
 use function count, is_array;
 
 
-final class ResponseItem
+final readonly class ResponseItem
 {
-	public readonly string $id;
-	public readonly string $state;
+	public string $id;
+	public string $state;
 
 	/** @var array<string, mixed> */
-	public readonly array $data;
+	public array $data;
 
 
 	public function __construct(\DOMElement $node)

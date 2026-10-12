@@ -2,8 +2,7 @@
 
 namespace DG\Pohoda;
 
-use Mcp\Capability\Registry\ElementReference;
-use Mcp\Capability\Registry\ReferenceHandlerInterface;
+use Mcp\Capability\Registry\{ElementReference, ReferenceHandlerInterface};
 use Mcp\Exception\ToolCallException;
 use function sprintf;
 
@@ -18,10 +17,10 @@ use function sprintf;
  *   - InvalidArgumentException: clean caller-input message forwarded as-is.
  *   - any other \Throwable: wrapped with message + class + file:line so genuine bugs surface.
  */
-final class McpToolCallGuard implements ReferenceHandlerInterface
+final readonly class McpToolCallGuard implements ReferenceHandlerInterface
 {
 	public function __construct(
-		private readonly ReferenceHandlerInterface $handler,
+		private ReferenceHandlerInterface $handler,
 	) {
 	}
 
@@ -38,7 +37,11 @@ final class McpToolCallGuard implements ReferenceHandlerInterface
 		} catch (\InvalidArgumentException $e) {
 			throw new ToolCallException($e->getMessage(), 0, $e);
 		} catch (\Throwable $e) {
-			throw new ToolCallException(sprintf('%s (%s in %s:%d)', $e->getMessage(), $e::class, basename($e->getFile()), $e->getLine()), 0, $e);
+			throw new ToolCallException(
+				sprintf('%s (%s in %s:%d)', $e->getMessage(), $e::class, basename($e->getFile()), $e->getLine()),
+				0,
+				$e,
+			);
 		}
 	}
 }

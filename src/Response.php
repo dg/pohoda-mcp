@@ -3,18 +3,18 @@
 namespace DG\Pohoda;
 
 
-final class Response
+final readonly class Response
 {
 	/** @var list<ResponseItem> */
-	public readonly array $items;
-	public readonly string $state;
-	public readonly string $programVersion;
+	public array $items;
+	public string $state;
+	public string $programVersion;
 
 
 	public function __construct(string $xml)
 	{
 		$doc = new \DOMDocument;
-		$root = @$doc->loadXML($xml) ? $doc->documentElement : null;
+		$root = @$doc->loadXML($xml) ? $doc->documentElement : null; // @ invalid XML triggers a warning
 		$this->state = $root?->getAttribute('state') ?: ($root ? 'unknown' : 'error');
 		$this->programVersion = $root?->getAttribute('programVersion') ?: '';
 

@@ -98,7 +98,7 @@ test('toArray() produces expected structure', function () {
 		. '<rsp:responsePackItem version="2.0" id="x1" state="ok">'
 		. '</rsp:responsePackItem>'
 		. '</rsp:responsePack>';
-	$arr = (new Response($xml))->toArray();
+	$arr = new Response($xml)->toArray();
 	Assert::same('ok', $arr['state']);
 	Assert::same('v1', $arr['programVersion']);
 	Assert::count(1, $arr['items']);

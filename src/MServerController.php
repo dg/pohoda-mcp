@@ -9,11 +9,11 @@ use function sprintf;
  * Controls the local Pohoda mServer process via `pohoda.exe /HTTP` commands.
  * Windows-only; mServer runs only as part of Pohoda, which is a Windows app.
  */
-final class MServerController
+final readonly class MServerController
 {
 	public function __construct(
-		private readonly string $exePath,
-		private readonly string $configName,
+		private string $exePath,
+		private string $configName,
 	) {
 	}
 
