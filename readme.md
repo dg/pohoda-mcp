@@ -180,7 +180,7 @@ Filtry: `id`, `dateFrom`, `dateTill`, `company`, `ico`, `number`
 
 #### list_stock
 
-Zásoby. Filtry: `id`, `code`, `name`, `EAN`, `storage`
+Zásoby. Filtry: `id`, `code`, `name`, `ean`, `storage`
 (cesta ve členění skladu, např. `"ZBOZI/Elektro"`), `store` (zkratka skladu),
 `internet` (true/false), `lastChanges`, `limit`.
 

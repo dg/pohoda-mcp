@@ -14,7 +14,7 @@ final class Response
 	public function __construct(string $xml)
 	{
 		$doc = new \DOMDocument;
-		$root = @$doc->loadXML($xml) ? $doc->documentElement : null;
+		$root = @$doc->loadXML($xml) ? $doc->documentElement : null; // @ invalid XML triggers a warning
 		$this->state = $root?->getAttribute('state') ?: ($root ? 'unknown' : 'error');
 		$this->programVersion = $root?->getAttribute('programVersion') ?: '';
 

@@ -14,31 +14,115 @@ class PohodaClient
 
 
 	private const AgendaNamespaces = [
-		'stock' => ['listPrefix' => 'lStk', 'listXsd' => 'list_stock.xsd', 'listRequest' => 'listStockRequest', 'requestTag' => 'requestStock'],
-		'invoice' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listInvoiceRequest', 'requestTag' => 'requestInvoice'],
-		'addressbook' => ['listPrefix' => 'lAdb', 'listXsd' => 'list_addBook.xsd', 'listRequest' => 'listAddressBookRequest', 'requestTag' => 'requestAddressBook', 'versionAttr' => 'addressBookVersion'],
+		'stock' => [
+			'listPrefix' => 'lStk',
+			'listXsd' => 'list_stock.xsd',
+			'listRequest' => 'listStockRequest',
+			'requestTag' => 'requestStock',
+		],
+		'invoice' => [
+			'listPrefix' => 'lst',
+			'listXsd' => 'list.xsd',
+			'listRequest' => 'listInvoiceRequest',
+			'requestTag' => 'requestInvoice',
+		],
+		'addressbook' => [
+			'listPrefix' => 'lAdb',
+			'listXsd' => 'list_addBook.xsd',
+			'listRequest' => 'listAddressBookRequest',
+			'requestTag' => 'requestAddressBook',
+			'versionAttr' => 'addressBookVersion',
+		],
 		'order' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listOrderRequest', 'requestTag' => 'requestOrder'],
-		'voucher' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listVoucherRequest', 'requestTag' => 'requestVoucher'],
+		'voucher' => [
+			'listPrefix' => 'lst',
+			'listXsd' => 'list.xsd',
+			'listRequest' => 'listVoucherRequest',
+			'requestTag' => 'requestVoucher',
+		],
 		'bank' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listBankRequest', 'requestTag' => 'requestBank'],
-		'contract' => ['listPrefix' => 'lCon', 'listXsd' => 'list_contract.xsd', 'listRequest' => 'listContractRequest', 'requestTag' => 'requestContract'],
+		'contract' => [
+			'listPrefix' => 'lCon',
+			'listXsd' => 'list_contract.xsd',
+			'listRequest' => 'listContractRequest',
+			'requestTag' => 'requestContract',
+		],
 		'intDoc' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listIntDocRequest', 'requestTag' => 'requestIntDoc'],
 		'offer' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listOfferRequest', 'requestTag' => 'requestOffer'],
-		'enquiry' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listEnquiryRequest', 'requestTag' => 'requestEnquiry'],
-		'vydejka' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listVydejkaRequest', 'requestTag' => 'requestVydejka'],
-		'prijemka' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listPrijemkaRequest', 'requestTag' => 'requestPrijemka'],
-		'prodejka' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listProdejkaRequest', 'requestTag' => 'requestProdejka'],
-		'prevodka' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listPrevodkaRequest', 'requestTag' => 'requestPrevodka'],
+		'enquiry' => [
+			'listPrefix' => 'lst',
+			'listXsd' => 'list.xsd',
+			'listRequest' => 'listEnquiryRequest',
+			'requestTag' => 'requestEnquiry',
+		],
+		'vydejka' => [
+			'listPrefix' => 'lst',
+			'listXsd' => 'list.xsd',
+			'listRequest' => 'listVydejkaRequest',
+			'requestTag' => 'requestVydejka',
+		],
+		'prijemka' => [
+			'listPrefix' => 'lst',
+			'listXsd' => 'list.xsd',
+			'listRequest' => 'listPrijemkaRequest',
+			'requestTag' => 'requestPrijemka',
+		],
+		'prodejka' => [
+			'listPrefix' => 'lst',
+			'listXsd' => 'list.xsd',
+			'listRequest' => 'listProdejkaRequest',
+			'requestTag' => 'requestProdejka',
+		],
+		'prevodka' => [
+			'listPrefix' => 'lst',
+			'listXsd' => 'list.xsd',
+			'listRequest' => 'listPrevodkaRequest',
+			'requestTag' => 'requestPrevodka',
+		],
 		'vyroba' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listVyrobaRequest', 'requestTag' => 'requestVyroba'],
-		'accountancy' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listAccountancyRequest', 'requestTag' => 'requestAccountancy'],
+		'accountancy' => [
+			'listPrefix' => 'lst',
+			'listXsd' => 'list.xsd',
+			'listRequest' => 'listAccountancyRequest',
+			'requestTag' => 'requestAccountancy',
+		],
 		'store' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listStoreRequest', 'requestTag' => 'requestStore'],
-		'bankAccount' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listBankAccountRequest', 'requestTag' => 'requestBankAccount', 'versionAttr' => 'bankAccountVersion'],
-		'cashRegister' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listCashRegisterRequest', 'requestTag' => 'requestCashRegister', 'versionAttr' => 'cashRegisterVersion'],
-		'numericalSeries' => ['listPrefix' => 'lst', 'listXsd' => 'list.xsd', 'listRequest' => 'listNumericalSeriesRequest', 'requestTag' => 'requestNumericalSeries', 'versionAttr' => 'numericalSeriesVersion'],
-		'centre' => ['listPrefix' => 'lCen', 'listXsd' => 'list_centre.xsd', 'listRequest' => 'listCentreRequest', 'requestTag' => 'requestCentre'],
-		'activity' => ['listPrefix' => 'lAcv', 'listXsd' => 'list_activity.xsd', 'listRequest' => 'listActivityRequest', 'requestTag' => 'requestActivity'],
+		'bankAccount' => [
+			'listPrefix' => 'lst',
+			'listXsd' => 'list.xsd',
+			'listRequest' => 'listBankAccountRequest',
+			'requestTag' => 'requestBankAccount',
+			'versionAttr' => 'bankAccountVersion',
+		],
+		'cashRegister' => [
+			'listPrefix' => 'lst',
+			'listXsd' => 'list.xsd',
+			'listRequest' => 'listCashRegisterRequest',
+			'requestTag' => 'requestCashRegister',
+			'versionAttr' => 'cashRegisterVersion',
+		],
+		'numericalSeries' => [
+			'listPrefix' => 'lst',
+			'listXsd' => 'list.xsd',
+			'listRequest' => 'listNumericalSeriesRequest',
+			'requestTag' => 'requestNumericalSeries',
+			'versionAttr' => 'numericalSeriesVersion',
+		],
+		'centre' => [
+			'listPrefix' => 'lCen',
+			'listXsd' => 'list_centre.xsd',
+			'listRequest' => 'listCentreRequest',
+			'requestTag' => 'requestCentre',
+		],
+		'activity' => [
+			'listPrefix' => 'lAcv',
+			'listXsd' => 'list_activity.xsd',
+			'listRequest' => 'listActivityRequest',
+			'requestTag' => 'requestActivity',
+		],
 	];
-	private string $authHeader;
-	private XmlBuilder $xml;
+	private readonly string $authHeader;
+	private readonly XmlBuilder $xml;
 	private ?MServerController $controller = null;
 	private bool $started = false;
 	private bool $controllerStarted = false;
@@ -93,7 +177,7 @@ class PohodaClient
 		$headers = $companyDetail ? ['STW-Authorization: ' . $this->authHeader] : [];
 		$response = $this->httpGet($url, $headers);
 
-		$doc = @simplexml_load_string($response);
+		$doc = @simplexml_load_string($response); // @ a plain text response triggers a parse warning
 		if ($doc === false) {
 			return ['message' => trim($response)];
 		}
@@ -237,8 +321,8 @@ class PohodaClient
 		$header = array_filter([
 			'stk:stockType' => 'card',
 			'stk:code' => $data['code'],
-			'stk:EAN' => $data['EAN'] ?? null,
-			'stk:PLU' => ($data['PLU'] ?? 0) ?: null,
+			'stk:EAN' => $data['ean'] ?? null,
+			'stk:PLU' => ($data['plu'] ?? 0) ?: null,
 			'stk:isSales' => $data['isSales'] ?? true,
 			'stk:isInternet' => $data['isInternet'] ?? false,
 			'stk:name' => $data['name'],

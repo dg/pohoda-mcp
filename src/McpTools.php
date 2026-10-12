@@ -2,9 +2,7 @@
 
 namespace DG\Pohoda;
 
-use Mcp\Capability\Attribute\McpResource;
-use Mcp\Capability\Attribute\McpTool;
-use Mcp\Capability\Attribute\Schema;
+use Mcp\Capability\Attribute\{McpResource, McpTool, Schema};
 use Mcp\Exception\ToolCallException;
 use Mcp\Schema\ToolAnnotations;
 use function count, is_array;
@@ -117,7 +115,7 @@ class McpTools
 	 * @param int $id Filter by record ID
 	 * @param string $code Filter by stock code
 	 * @param string $name Filter by name
-	 * @param string $EAN Filter by EAN barcode
+	 * @param string $ean Filter by EAN barcode
 	 * @param string $storage Filter by storage path (e.g. "ZBOZI/Elektro")
 	 * @param string $store Filter by store IDS
 	 * @param string $lastChanges Records changed since (YYYY-MM-DDThh:mm:ss)
@@ -132,7 +130,7 @@ class McpTools
 		int $id = 0,
 		string $code = '',
 		string $name = '',
-		string $EAN = '',
+		string $ean = '',
 		string $storage = '',
 		string $store = '',
 		?bool $internet = null,
@@ -144,7 +142,7 @@ class McpTools
 			'id' => $id ?: null,
 			'code' => $code,
 			'name' => $name,
-			'EAN' => $EAN,
+			'EAN' => $ean,
 			'storage' => $storage,
 			'store' => $store,
 			'internet' => $internet,
@@ -326,8 +324,8 @@ class McpTools
 	 * @param string $unit Unit (default: ks)
 	 * @param string $storage Storage/warehouse path (e.g. "ZBOZI/Elektro")
 	 * @param float $purchasingPrice Purchasing/cost price
-	 * @param string $EAN EAN barcode
-	 * @param int $PLU PLU code for cash registers
+	 * @param string $ean EAN barcode
+	 * @param int $plu PLU code for cash registers
 	 * @param bool $isSales Whether available for sale
 	 * @param bool $isInternet Whether available on e-shop
 	 * @param string $description Product description
@@ -356,8 +354,8 @@ class McpTools
 		#[Schema(enum: self::VatRates)]
 		string $vatRate = 'high',
 		float $purchasingPrice = 0,
-		string $EAN = '',
-		int $PLU = 0,
+		string $ean = '',
+		int $plu = 0,
 		bool $isSales = true,
 		bool $isInternet = false,
 		string $description = '',
@@ -382,8 +380,8 @@ class McpTools
 				'storage',
 				'vatRate',
 				'purchasingPrice',
-				'EAN',
-				'PLU',
+				'ean',
+				'plu',
 				'isSales',
 				'isInternet',
 				'description',
@@ -434,7 +432,8 @@ class McpTools
 
 
 	/**
-	 * Print a record from Pohoda — either to a printer or as PDF (saved to a file on the mServer machine, optionally also returned as Base64).
+	 * Print a record from Pohoda — either to a printer or as PDF
+	 * (saved to a file on the mServer machine, optionally also returned as Base64).
 	 * The pdfPath is on the machine running mServer, not the Claude client.
 	 * Provide either pdfPath (PDF output) or printer (printer output); if neither is set, the default printer is used.
 	 *
