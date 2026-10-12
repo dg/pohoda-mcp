@@ -2,6 +2,8 @@
 
 namespace DG\Pohoda;
 
+use function sprintf;
+
 
 /**
  * Controls the local Pohoda mServer process via `pohoda.exe /HTTP` commands.

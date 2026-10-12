@@ -2,7 +2,7 @@
 
 namespace DG\Pohoda;
 
-use function is_array, is_bool, is_int, is_scalar, is_string, sprintf;
+use function is_array, is_bool, is_int, is_scalar, is_string;
 
 
 /**
