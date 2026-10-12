@@ -7,6 +7,8 @@ use Mcp\Capability\Attribute\McpTool;
 use Mcp\Capability\Attribute\Schema;
 use Mcp\Exception\ToolCallException;
 use Mcp\Schema\ToolAnnotations;
+use function count, is_array;
+use const JSON_PRETTY_PRINT, JSON_UNESCAPED_UNICODE;
 
 
 class McpTools

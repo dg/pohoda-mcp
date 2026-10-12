@@ -5,6 +5,7 @@ namespace DG\Pohoda;
 use Mcp\Capability\Registry\ElementReference;
 use Mcp\Capability\Registry\ReferenceHandlerInterface;
 use Mcp\Exception\ToolCallException;
+use function sprintf;
 
 
 /**
