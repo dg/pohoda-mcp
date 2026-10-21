@@ -1,7 +1,7 @@
 {
 	"name": "dg/pohoda-mcp",
-	"description": "MCP server pro účetní software Pohoda. Umožňuje AI asistentům číst a vytvářet faktury, objednávky, zásoby, kontakty a další agendy přes mServer XML API.",
-	"keywords": ["mcp", "pohoda", "stormware", "mserver", "accounting", "xml-api", "ai", "invoices"],
+	"description": "📒 Pohoda MCP: an MCP server for the Pohoda accounting software by Stormware. AI assistants can read and create invoices, orders, stock, contacts and more through the mServer XML API.",
+	"keywords": ["pohoda", "stormware", "mserver", "accounting", "invoices", "mcp", "ai", "xml api"],
 	"authors": [
 		{
 			"name": "David Grudl",
