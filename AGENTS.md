@@ -33,6 +33,7 @@ Popisuje MCP server pro účetní software Pohoda (mServer XML API).
 - Filtry pro doklady: id, dateFrom, dateTill, selectedCompanys, selectedIco, selectedNumbers, lastChanges
 - Pozor na namespace ve filtru `selectedNumbers`: obaly `ftr:number` a `ftr:selectedNumbers` jsou v `ftr:`, ale vnořený `typ:numberRequested` je v `typ:` (schéma sdílí strukturu s datovým typem `typ:number`, který pojmenovává hodnotu `numberRequested`). Záměna za `ftr:numberRequested` způsobí schema validation error.
 - Filtry pro zásoby: id, code, name, EAN, PLU, storage, store, internet, lastChanges
+- Filtry pro adresář: id, company, ico, lastChanges; `ftr:company` a `ftr:ico` jsou přímo ve filtru, obaly `selectedCompanys` a `selectedIco` z dokladů schéma adresáře nezná
 - `contract` používá vlastní namespace `lCon` a `list_contract.xsd`, ostatní dokladové agendy sdílejí `lst` a `list.xsd`
 - `centre` používá `lCen`/`list_centre.xsd`, `activity` používá `lAcv`/`list_activity.xsd`
 - Tisk přes `<prn:print>` požaduje agendu česky (`vydane_faktury`, `zasoby`, ...) a ID tiskové sestavy; podporuje čtyři výstupy: na tiskárnu, PDF soubor, PDF jako Base64 v odpovědi, odeslání emailem
@@ -62,7 +63,7 @@ Popisuje MCP server pro účetní software Pohoda (mServer XML API).
 
 ## Testy
 
-- Unit testy v `tests/*.phpt` přes Nette Tester (`tests/McpTools.phpt`, `tests/Response.phpt`, `tests/XmlBuilder.phpt`). Spouští se `vendor/bin/tester tests`.
+- Unit testy v `tests/*.phpt` přes Nette Tester (`tests/McpTools.phpt`, `tests/PohodaClient.phpt`, `tests/Response.phpt`, `tests/XmlBuilder.phpt`). Spouští se `vendor/bin/tester tests`.
 - `tests/bootstrap.php` inicializuje Tester; `tests/output/` je generovaný (neversionovaný).
 - Smoke test MCP serveru přes stdio transport (neprovádí skutečné HTTP volání na mServer, jen inicializuje protocol):
 

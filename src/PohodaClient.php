@@ -209,7 +209,7 @@ class PohodaClient
 		$requestTag = $ns['listPrefix'] . ':' . $ns['listRequest'];
 		$innerTag = $ns['listPrefix'] . ':' . $ns['requestTag'];
 
-		$filterData = self::buildFilterData($filter);
+		$filterData = self::buildFilterData($agenda, $filter);
 		$inner = [$innerTag => $filterData ? ['ftr:filter' => $filterData] : []];
 
 		return $this->send($requestTag, '2.0', $inner, 'List ' . $agenda, [
@@ -500,7 +500,7 @@ class PohodaClient
 	 * @param array<string, mixed> $filter
 	 * @return array<string, mixed>
 	 */
-	private static function buildFilterData(array $filter): array
+	private static function buildFilterData(string $agenda, array $filter): array
 	{
 		$data = [];
 		foreach ($filter as $key => $value) {
@@ -512,8 +512,12 @@ class PohodaClient
 				'dateFrom' => ['ftr:dateFrom' => $value],
 				'dateTill' => ['ftr:dateTill' => $value],
 				'lastChanges' => ['ftr:lastChanges' => $value],
-				'company' => ['ftr:selectedCompanys' => ['ftr:company' => $value]],
-				'ico' => ['ftr:selectedIco' => ['ftr:ico' => $value]],
+				'company' => $agenda === 'addressbook'
+					? ['ftr:company' => $value]
+					: ['ftr:selectedCompanys' => ['ftr:company' => $value]],
+				'ico' => $agenda === 'addressbook'
+					? ['ftr:ico' => $value]
+					: ['ftr:selectedIco' => ['ftr:ico' => $value]],
 				'number' => ['ftr:selectedNumbers' => ['ftr:number' => ['typ:numberRequested' => $value]]],
 				'code' => ['ftr:code' => $value],
 				'name' => ['ftr:name' => $value],

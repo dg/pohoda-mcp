@@ -157,7 +157,7 @@ class McpTools
 	 * For documents use list_documents; for stock/inventory use list_stock.
 	 *
 	 * @param int $id Filter by record ID
-	 * @param string $company Filter by company name
+	 * @param string $company Filter by the exact company name
 	 * @param string $ico Filter by ICO
 	 * @param string $lastChanges Records changed since (YYYY-MM-DDThh:mm:ss)
 	 * @param int $limit Max records to return (client-side truncation, default 100)
