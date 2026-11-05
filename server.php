@@ -8,6 +8,7 @@ use DG\Pohoda\MServerController;
 use DG\Pohoda\PohodaClient;
 use Mcp\Capability\Registry\ReferenceHandler;
 use Mcp\Server;
+use Mcp\Server\Session\InMemorySessionStore;
 use Mcp\Server\Transport\StdioTransport;
 
 $client = new PohodaClient(
@@ -29,6 +30,8 @@ $container->set(McpTools::class, new McpTools($client));
 
 $server = Server::builder()
 	->setServerInfo('pohoda-mserver', '1.0.0', 'MCP server for Pohoda accounting software')
+	// a stdio session lasts as long as the process, the idle run loop would expire it after an hour
+	->setSession(new InMemorySessionStore(ttl: PHP_INT_MAX))
 	->setInstructions(<<<'TEXT'
 		Pohoda MCP server interacts with Pohoda accounting software via its mServer XML API.
 
@@ -51,4 +54,14 @@ $server = Server::builder()
 	->setDiscovery(__DIR__ . '/src', ['.'], namePatterns: ['*Tools.php'])
 	->build();
 
-$server->run(new StdioTransport);
+// fgets() on a pipe silent for about 13.5 hours reports a false EOF on Windows, which would end the server
+$server->run(new class extends StdioTransport {
+	protected function processInput(): void
+	{
+		$read = [STDIN];
+		$write = $except = null;
+		if (stream_select($read, $write, $except, 0, 50000) > 0) {
+			parent::processInput();
+		}
+	}
+});
