@@ -88,6 +88,15 @@ composer install
 ```
 
 
+Aktualizace
+-----------
+
+```bash
+git pull
+composer update
+```
+
+
 Konfigurace
 -----------
 
