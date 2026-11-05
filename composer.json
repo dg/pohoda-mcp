@@ -16,7 +16,7 @@
 		"ext-dom": "*",
 		"ext-simplexml": "*",
 		"ext-xmlwriter": "*",
-		"mcp/sdk": "^0.7.0",
+		"mcp/sdk": "^0.9",
 		"symfony/finder": "^8.0"
 	},
 	"require-dev": {
