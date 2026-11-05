@@ -11,10 +11,11 @@
 	"type": "project",
 	"license": "MIT",
 	"require": {
-		"php": ">=8.1",
+		"php": ">=8.4",
 		"ext-curl": "*",
 		"ext-dom": "*",
 		"ext-simplexml": "*",
+		"ext-xmlwriter": "*",
 		"mcp/sdk": "^0.7.0",
 		"symfony/finder": "^8.0"
 	},
@@ -28,6 +29,10 @@
 		"psr-4": {
 			"DG\\Pohoda\\": "src/"
 		}
+	},
+	"scripts": {
+		"phpstan": "phpstan analyse",
+		"tester": "tester tests -s"
 	},
 	"config": {
 		"allow-plugins": {

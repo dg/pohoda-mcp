@@ -13,8 +13,8 @@ s Pohodou.
 Požadavky
 ---------
 
-- PHP 8.1+
-- ext-curl, ext-dom, ext-simplexml
+- PHP 8.4+
+- ext-curl, ext-dom, ext-simplexml, ext-xmlwriter
 - Pohoda s aktivním mServerem (schéma verze 2)
 
 
