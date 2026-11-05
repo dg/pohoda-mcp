@@ -115,3 +115,17 @@ test('handles numeric keys for array items', function () use ($builder) {
 	]);
 	Assert::match('%A%<ord:orderItem>%A?%Item 1%A?%</ord:orderItem>%A?%<ord:orderItem>%A?%Item 2%A?%</ord:orderItem>%A%', $xml);
 });
+
+
+test('buildRaw() keeps diacritics in text, CDATA and note', function () use ($builder) {
+	$xml = $builder->buildRaw(
+		'<inv:invoice xmlns:inv="urn:inv"><inv:text>Přijatá ŘÁň</inv:text><inv:note><![CDATA[Účet €]]></inv:note></inv:invoice>',
+		'Poznámka A & "B"',
+	);
+
+	$doc = new DOMDocument;
+	Assert::true($doc->loadXML($xml));
+	Assert::same('Poznámka A & "B"', $doc->documentElement->getAttribute('note'));
+	Assert::same('Přijatá ŘÁň', $doc->getElementsByTagNameNS('urn:inv', 'text')->item(0)->textContent);
+	Assert::same('Účet €', $doc->getElementsByTagNameNS('urn:inv', 'note')->item(0)->textContent);
+});

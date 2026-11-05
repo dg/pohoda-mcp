@@ -93,12 +93,12 @@ final class XmlBuilder
 
 
 	/**
-	 * Build dataPack XML from raw inner XML string (for sendRawXml).
+	 * Build dataPack XML from raw inner XML string in UTF-8 (for sendRawXml).
 	 */
 	public function buildRaw(string $innerXml, string $note = ''): string
 	{
 		$id = sprintf('%08d', random_int(1, 99_999_999));
-		return '<?xml version="1.0" encoding="Windows-1250"?>'
+		return '<?xml version="1.0" encoding="UTF-8"?>'
 			. '<dat:dataPack'
 			. ' xmlns:dat="http://www.stormware.cz/schema/version_2/data.xsd"'
 			. ' xmlns:typ="http://www.stormware.cz/schema/version_2/type.xsd"'
