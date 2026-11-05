@@ -9,6 +9,7 @@ final readonly class ResponseItem
 {
 	public string $id;
 	public string $state;
+	public string $note;
 
 	/** @var array<string, mixed> */
 	public array $data;
@@ -18,6 +19,7 @@ final readonly class ResponseItem
 	{
 		$this->id = $node->getAttribute('id') ?: '';
 		$this->state = $node->getAttribute('state') ?: 'unknown';
+		$this->note = $node->getAttribute('note');
 
 		$data = [];
 		foreach ($node->childNodes as $child) {
@@ -32,7 +34,8 @@ final readonly class ResponseItem
 
 	public function isOk(): bool
 	{
-		return $this->state === 'ok';
+		// a failed import leaves the item 'ok' and reports the error in the nested response
+		return $this->state === 'ok' && ($this->data['@state'] ?? null) !== 'error';
 	}
 
 
@@ -44,6 +47,7 @@ final readonly class ResponseItem
 		return [
 			'id' => $this->id,
 			'state' => $this->state,
+			'note' => $this->note,
 			'data' => $this->data,
 		];
 	}

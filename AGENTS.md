@@ -11,7 +11,7 @@ Popisuje MCP server pro účetní software Pohoda (mServer XML API).
 - `src/PohodaClient.php` -- HTTP klient pro mServer, doménové metody (createInvoice, createStock, ...), XML stavba přes XmlBuilder. Volitelně drží `MServerController` (přes `setController()`) a před každým HTTP requestem ověřuje, že mServer běží — pokud ne, sám ho přes controller spustí. Při destrukci ho zase zastaví, ale jen pokud ho sám startoval.
 - `src/XmlBuilder.php` -- staví Pohoda XML požadavky pomocí XMLWriter, data jako vnořené PHP pole
 - `src/Response.php` -- parsovaná odpověď z mServeru s `isOk()`, `toArray()`, seznam `ResponseItem`
-- `src/ResponseItem.php` -- jeden záznam z odpovědi s `id`, `state`, `data`, `isOk()`
+- `src/ResponseItem.php` -- jeden záznam z odpovědi s `id`, `state`, `note`, `data`, `isOk()`
 - `src/MServerController.php` -- spouští/zastavuje Pohoda mServer přes `pohoda.exe /HTTP`, non-blocking launch + polling `PohodaClient::getStatus()`
 
 ## Pohoda mServer API
@@ -20,6 +20,8 @@ Popisuje MCP server pro účetní software Pohoda (mServer XML API).
 - Autentizace hlavičkou `STW-Authorization: Basic {base64(user:pass)}`
 - Požadavky zabaleny v `<dat:dataPack>` obálce s ICO firmy
 - Odpovědi v `<rsp:responsePack>` s atributem `state="ok"|"error"`
+- Selhání se hlásí na třech úrovních a vyšší úrovně přitom zůstávají `ok`: `responsePack` (vadná obálka, špatné IČO, důvod v `note`), `responsePackItem` (porušené schéma, neznámý element, důvod v `note`), vnořená odpověď jako `adb:addressbookResponse` (neúspěšný import, `rdc:id` 0, důvod v `rdc:importDetails`). `Response::isOk()` kontroluje všechny tři. Varování má být podle schématu jen v `rdc:detail`, na mServeru ověřené není, proto vnořenou odpověď kód bere za selhání jen při `error`.
+- Bajty 0x81, 0x83, 0x88, 0x90 a 0x98 nejsou ve Windows-1250 definované: mServer je do odpovědi zapíše a libxml ji pak nepřečte. Stačí jeden takový záznam v databázi a padá výpis celé agendy.
 - XML namespace schémata: `http://www.stormware.cz/schema/version_2/*.xsd`
 - Kódování: `build()` deklaruje Windows-1250 a převod dělá XMLWriter, `buildRaw()` posílá řetězec beze změny a deklaruje UTF-8. mServer přijímá obojí; azbuka a emoji se neuloží, zpět se přečtou jako `?`.
 - Atribut `note` v `dat:dataPack` je podle schématu povinný, i když je prázdný
@@ -60,7 +62,7 @@ Popisuje MCP server pro účetní software Pohoda (mServer XML API).
 
 ## Testy
 
-- Unit testy v `tests/*.phpt` přes Nette Tester (`tests/Response.phpt`, `tests/XmlBuilder.phpt`). Spouští se `vendor/bin/tester tests`.
+- Unit testy v `tests/*.phpt` přes Nette Tester (`tests/McpTools.phpt`, `tests/Response.phpt`, `tests/XmlBuilder.phpt`). Spouští se `vendor/bin/tester tests`.
 - `tests/bootstrap.php` inicializuje Tester; `tests/output/` je generovaný (neversionovaný).
 - Smoke test MCP serveru přes stdio transport (neprovádí skutečné HTTP volání na mServer, jen inicializuje protocol):
 

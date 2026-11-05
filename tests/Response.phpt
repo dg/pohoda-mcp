@@ -11,6 +11,7 @@ test('parses plain text status as error', function () {
 	Assert::same('error', $r->state);
 	Assert::same([], $r->items);
 	Assert::false($r->isOk());
+	Assert::match('The mServer response is not readable XML.%A%', $r->note);
 });
 
 
@@ -38,6 +39,80 @@ test('parses error response', function () {
 	$r = new Response($xml);
 	Assert::false($r->isOk());
 	Assert::count(0, $r->items);
+});
+
+
+test('note of the pack is exposed', function () {
+	$xml = '<?xml version="1.0" encoding="Windows-1250"?>'
+		. '<rsp:responsePack version="2.0" id="t1" state="error" note="Wrong company"'
+		. ' xmlns:rsp="http://www.stormware.cz/schema/version_2/response.xsd">'
+		. '</rsp:responsePack>';
+	$r = new Response($xml);
+	Assert::same('Wrong company', $r->note);
+	Assert::same('Wrong company', $r->toArray()['note']);
+});
+
+
+test('item error fails the response even when the pack is ok', function () {
+	$xml = '<?xml version="1.0" encoding="Windows-1250"?>'
+		. '<rsp:responsePack version="2.0" id="t1" state="ok"'
+		. ' xmlns:rsp="http://www.stormware.cz/schema/version_2/response.xsd">'
+		. '<rsp:responsePackItem version="2.0" id="i1" state="error" note="Schema validation failed"/>'
+		. '</rsp:responsePack>';
+	$r = new Response($xml);
+	Assert::false($r->isOk());
+	Assert::false($r->items[0]->isOk());
+	Assert::same('Schema validation failed', $r->items[0]->note);
+	Assert::same('Schema validation failed', $r->toArray()['items'][0]['note']);
+});
+
+
+test('nested response error fails the response even when pack and item are ok', function () {
+	$xml = '<?xml version="1.0" encoding="Windows-1250"?>'
+		. '<rsp:responsePack version="2.0" id="t1" state="ok"'
+		. ' xmlns:rsp="http://www.stormware.cz/schema/version_2/response.xsd"'
+		. ' xmlns:adb="http://www.stormware.cz/schema/version_2/addressbook.xsd"'
+		. ' xmlns:rdc="http://www.stormware.cz/schema/version_2/documentresponse.xsd">'
+		. '<rsp:responsePackItem version="2.0" id="i1" state="ok">'
+		. '<adb:addressbookResponse version="2.0" state="error">'
+		. '<rdc:importDetails><rdc:detail><rdc:state>error</rdc:state><rdc:note>Missing address</rdc:note></rdc:detail></rdc:importDetails>'
+		. '<rdc:producedDetails><rdc:id>0</rdc:id></rdc:producedDetails>'
+		. '</adb:addressbookResponse>'
+		. '</rsp:responsePackItem>'
+		. '</rsp:responsePack>';
+	$r = new Response($xml);
+	Assert::false($r->isOk());
+	Assert::false($r->items[0]->isOk());
+	Assert::same('Missing address', $r->items[0]->data['importDetails']['detail']['note']);
+});
+
+
+test('warning in import details does not fail the response', function () {
+	$xml = '<?xml version="1.0" encoding="Windows-1250"?>'
+		. '<rsp:responsePack version="2.0" id="t1" state="ok"'
+		. ' xmlns:rsp="http://www.stormware.cz/schema/version_2/response.xsd"'
+		. ' xmlns:adb="http://www.stormware.cz/schema/version_2/addressbook.xsd"'
+		. ' xmlns:rdc="http://www.stormware.cz/schema/version_2/documentresponse.xsd">'
+		. '<rsp:responsePackItem version="2.0" id="i1" state="ok">'
+		. '<adb:addressbookResponse version="2.0" state="ok">'
+		. '<rdc:importDetails><rdc:detail><rdc:state>warning</rdc:state><rdc:note>Rounded</rdc:note></rdc:detail></rdc:importDetails>'
+		. '</adb:addressbookResponse>'
+		. '</rsp:responsePackItem>'
+		. '</rsp:responsePack>';
+	Assert::true(new Response($xml)->isOk());
+});
+
+
+test('warning state of the nested response does not fail the response', function () {
+	$xml = '<?xml version="1.0" encoding="Windows-1250"?>'
+		. '<rsp:responsePack version="2.0" id="t1" state="ok"'
+		. ' xmlns:rsp="http://www.stormware.cz/schema/version_2/response.xsd"'
+		. ' xmlns:adb="http://www.stormware.cz/schema/version_2/addressbook.xsd">'
+		. '<rsp:responsePackItem version="2.0" id="i1" state="ok">'
+		. '<adb:addressbookResponse version="2.0" state="warning"/>'
+		. '</rsp:responsePackItem>'
+		. '</rsp:responsePack>';
+	Assert::true(new Response($xml)->isOk());
 });
 
 

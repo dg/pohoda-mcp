@@ -563,7 +563,7 @@ class McpTools
 	{
 		$data = $response->toArray();
 		if (!$response->isOk()) {
-			throw new ToolCallException('Pohoda mServer returned error: ' . self::json($data));
+			throw new ToolCallException('Pohoda mServer did not report success: ' . self::json($data));
 		}
 		return $data;
 	}
