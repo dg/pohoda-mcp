@@ -6,8 +6,9 @@ Popisuje MCP server pro účetní software Pohoda (mServer XML API).
 
 ## Architektura
 
-- `server.php` -- vstupní bod; skládá MCP server (`mcp/sdk`) přes inline anonymní `Psr\Container` wrapper, který MCP serveru při každém `get(McpTools::class)` dodá `McpTools` s injektovaným sdíleným `PohodaClient`. Attribute discovery běží nad `src/`. Pokud jsou nastaveny env `POHODA_EXE_PATH` a `POHODA_CONFIG_NAME`, předá se `PohodaClient`u `MServerController` pro lazy autostart mServeru.
+- `server.php` -- vstupní bod; skládá MCP server (`mcp/sdk`), registruje `McpTools` se sdíleným `PohodaClient` v kontejneru SDK a obaluje jeho reference handler do `McpToolCallGuard`. Attribute discovery běží nad `src/`. Pokud jsou nastaveny env `POHODA_EXE_PATH` a `POHODA_CONFIG_NAME`, předá se `PohodaClient`u `MServerController` pro lazy autostart mServeru.
 - `src/McpTools.php` -- tenký MCP adaptér s `#[McpTool]` atributy, mapuje MCP parametry na PohodaClient metody
+- `src/McpToolCallGuard.php` -- dekoruje reference handler SDK: `ToolCallException` propouští beze změny, `InvalidArgumentException` předá jako čistou zprávu, jakýkoli jiný `Throwable` obalí jeho třídou a file:line
 - `src/PohodaClient.php` -- HTTP klient pro mServer, doménové metody (createInvoice, createStock, ...), XML stavba přes XmlBuilder. Volitelně drží `MServerController` (přes `setController()`) a před každým HTTP requestem ověřuje, že mServer běží — pokud ne, sám ho přes controller spustí. Při destrukci ho zase zastaví, ale jen pokud ho sám startoval.
 - `src/XmlBuilder.php` -- staví Pohoda XML požadavky pomocí XMLWriter, data jako vnořené PHP pole
 - `src/Response.php` -- parsovaná odpověď z mServeru s `isOk()`, `toArray()`, seznam `ResponseItem`
@@ -24,6 +25,7 @@ Popisuje MCP server pro účetní software Pohoda (mServer XML API).
 - Bajty 0x81, 0x83, 0x88, 0x90 a 0x98 nejsou ve Windows-1250 definované: mServer je do odpovědi zapíše a libxml ji pak nepřečte. Stačí jeden takový záznam v databázi a padá výpis celé agendy.
 - XML namespace schémata: `http://www.stormware.cz/schema/version_2/*.xsd`
 - Kódování: `build()` deklaruje Windows-1250 a převod dělá XMLWriter, `buildRaw()` posílá řetězec beze změny a deklaruje UTF-8. mServer přijímá obojí; azbuka a emoji se neuloží, zpět se přečtou jako `?`.
+- Na Windows s ANSI kódovou stránkou 1252 vrací mServer text bez znaků, které cp1252 nemá (`ř` jako `r`), i u záznamů zapsaných přes `build()`. Souvislost s kódovou stránkou je odhad a není zjištěné, jestli se znaky ztrácejí při ukládání, nebo při čtení.
 - Atribut `note` v `dat:dataPack` je podle schématu povinný, i když je prázdný
 
 ## Schéma a agendy
@@ -36,6 +38,7 @@ Popisuje MCP server pro účetní software Pohoda (mServer XML API).
 - Filtry pro adresář: id, company, ico, lastChanges; `ftr:company` a `ftr:ico` jsou přímo ve filtru, obaly `selectedCompanys` a `selectedIco` z dokladů schéma adresáře nezná
 - `contract` používá vlastní namespace `lCon` a `list_contract.xsd`, ostatní dokladové agendy sdílejí `lst` a `list.xsd`
 - `centre` používá `lCen`/`list_centre.xsd`, `activity` používá `lAcv`/`list_activity.xsd`
+- Starší verze Pohody odmítá `lst:listAccountancyRequest`, `lCen:listCentreRequest` a `lAcv:listActivityRequest` hláškou `Neznámá žádost`; novější verze neověřené
 - Tisk přes `<prn:print>` požaduje agendu česky (`vydane_faktury`, `zasoby`, ...) a ID tiskové sestavy; podporuje čtyři výstupy: na tiskárnu, PDF soubor, PDF jako Base64 v odpovědi, odeslání emailem
 - Editace faktur přes XML API není podporována; zásoby a objednávky mají `actionType` pro update
 
@@ -44,6 +47,7 @@ Popisuje MCP server pro účetní software Pohoda (mServer XML API).
 - Status endpoint `/status` vrací plain text, ne XML — `PohodaClient::getStatus()` to ošetřuje tak, že při neparsovatelné odpovědi vrátí `['message' => $text]`
 - mServer zpracovává požadavky sekvenčně a souběžné requesty serializuje (empiricky, Stormware to explicitně nedokumentuje)
 - mServer naslouchá jen na IPv4; PHP `file_get_contents`/`fsockopen` s hostem `localhost` jde nejdřív na IPv6 (`::1`) a čeká na timeout — používat `127.0.0.1`. Curl si IPv4 fallback zařídí sám, proto `PohodaClient` přes curl funguje i s `localhost`.
+- mServer občas vrátil HTTP 500 s prázdným tělem; příčina není známá a při opakování volání se neprojevil
 
 ## Správa procesu (CLI a MServerController)
 
@@ -56,7 +60,7 @@ Popisuje MCP server pro účetní software Pohoda (mServer XML API).
 ## Konvence XML builderu
 
 - Data se předávají jako vnořené PHP pole, klíče jsou prefixované namespace (např. `'inv:date' => '2024-01-15'`)
-- `null`, `''` a `[]` hodnoty se přeskakují
+- `null` a `''` hodnoty se přeskakují, `[]` zapíše prázdný element
 - Booleans se píší jako `'true'`/`'false'`
 - `@`-prefixované klíče v poli jsou XML atributy (např. `'@agenda' => 'vydane_faktury'`)
 - Numerické klíče slouží pro opakované elementy (pole polí)
